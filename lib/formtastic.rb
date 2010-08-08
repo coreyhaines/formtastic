@@ -28,6 +28,8 @@ module Formtastic #:nodoc:
                    :required_string, :optional_string, :inline_errors, :label_str_method, :collection_label_methods,
                    :inline_order, :file_methods, :priority_countries, :i18n_lookups_by_default, :escape_html_entities_in_hints_and_labels, :default_commit_button_accesskey 
 
+    cattr_accessor :custom_id_prefix
+
     RESERVED_COLUMNS = [:created_at, :updated_at, :created_on, :updated_on, :lock_version, :version]
 
     INLINE_ERROR_TYPES = [:sentence, :list, :first]
@@ -94,7 +96,7 @@ module Formtastic #:nodoc:
       html_class << 'error' if @object && @object.respond_to?(:errors) && !@object.errors[method.to_sym].blank?
 
       wrapper_html = options.delete(:wrapper_html) || {}
-      wrapper_html[:id]  ||= generate_html_id(method)
+      wrapper_html[:id]  ||= @@custom_id_prefix + generate_html_id(method)
       wrapper_html[:class] = (html_class << wrapper_html[:class]).flatten.compact.join(' ')
 
       if options[:input_html] && options[:input_html][:id]
@@ -1846,6 +1848,7 @@ module Formtastic #:nodoc:
           options = args.extract_options!
           options[:builder] ||= @@builder
           options[:html] ||= {}
+          @@builder.custom_id_prefix = options[:id_prefix].to_s
 
           singularizer = defined?(ActiveModel::Naming.singular) ? ActiveModel::Naming.method(:singular) : ActionController::RecordIdentifier.method(:singular_class_name)
 
