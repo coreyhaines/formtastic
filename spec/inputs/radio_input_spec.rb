@@ -228,6 +228,7 @@ describe 'radio input' do
 
   describe "when :label option is false" do
     before do
+      @output_buffer = ''
       @new_post.stub!(:author_ids).and_return(nil)
       @form = semantic_form_for(@new_post) do |builder|
         concat(builder.input(:authors, :as => :radio, :label => false))

@@ -259,7 +259,6 @@ describe 'select input' do
     end
     
     it 'should call find with :include for more optimized queries' do
-      pending "not sure what is going on, but trying to get specs passing after the switch from #find to #all"
       Author.should_receive(:all).with(:include => :continent)
 
       semantic_form_for(@new_post) do |builder|
