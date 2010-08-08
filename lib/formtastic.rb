@@ -894,10 +894,12 @@ module Formtastic #:nodoc:
         list_item_content = collection.map do |c|
           label = c.is_a?(Array) ? c.first : c
           value = c.is_a?(Array) ? c.last  : c
-          input_id = generate_html_id(input_name, value.to_s.gsub(/\s/, '_').gsub(/\W/, '').downcase)
+          input_id = @@custom_id_prefix + generate_html_id(input_name, value.to_s.gsub(/\s/, '_').gsub(/\W/, '').downcase)
+          html_options[:id] = input_id
           input_ids << input_id
 
           html_options[:checked] = selected_value == value if selected_option_is_present
+
 
           li_content = template.content_tag(:label,
             Formtastic::Util.html_safe("#{self.radio_button(input_name, value, html_options)} #{escape_html_entities(label)}"),

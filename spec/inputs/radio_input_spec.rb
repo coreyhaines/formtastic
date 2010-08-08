@@ -251,5 +251,20 @@ describe 'radio input' do
     end
 
     it_should_have_input_wrapper_with_id("custom_prefix_post_authors_input")
+
+    it "should add the custom prefix to each label's for" do
+      output_buffer.concat(@form) if Formtastic::Util.rails3?
+
+      ::Author.find(:all).each do |author|
+        output_buffer.should have_tag("form li fieldset ol li label[@for='custom_prefix_post_author_ids_#{author.id}']")
+      end
+    end
+
+    it "should add the custom prefix to each input" do
+      output_buffer.concat(@form) if Formtastic::Util.rails3?
+      ::Author.find(:all).each do |author|
+        output_buffer.should have_tag("form li fieldset ol li label input#custom_prefix_post_author_ids_#{author.id}")
+      end
+    end
   end
 end
