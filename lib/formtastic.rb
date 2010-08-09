@@ -96,7 +96,7 @@ module Formtastic #:nodoc:
       html_class << 'error' if @object && @object.respond_to?(:errors) && !@object.errors[method.to_sym].blank?
 
       wrapper_html = options.delete(:wrapper_html) || {}
-      wrapper_html[:id]  ||= @@custom_id_prefix + generate_html_id(method)
+      wrapper_html[:id]  ||= generate_html_id(method)
       wrapper_html[:class] = (html_class << wrapper_html[:class]).flatten.compact.join(' ')
 
       if options[:input_html] && options[:input_html][:id]
@@ -894,12 +894,11 @@ module Formtastic #:nodoc:
         list_item_content = collection.map do |c|
           label = c.is_a?(Array) ? c.first : c
           value = c.is_a?(Array) ? c.last  : c
-          input_id = @@custom_id_prefix + generate_html_id(input_name, value.to_s.gsub(/\s/, '_').gsub(/\W/, '').downcase)
-          html_options[:id] = input_id
+          input_id = generate_html_id(input_name, value.to_s.gsub(/\s/, '_').gsub(/\W/, '').downcase)
           input_ids << input_id
 
           html_options[:checked] = selected_value == value if selected_option_is_present
-
+          html_options[:id] = input_id
 
           li_content = template.content_tag(:label,
             Formtastic::Util.html_safe("#{self.radio_button(input_name, value, html_options)} #{escape_html_entities(label)}"),
@@ -1647,16 +1646,16 @@ module Formtastic #:nodoc:
       # and method names.
       #
       def generate_html_id(method_name, value='input') #:nodoc:
-        if options.has_key?(:index)
-          index = "_#{options[:index]}"
-        elsif defined?(@auto_index)
-          index = "_#{@auto_index}"
-        else
-          index = ""
-        end
+        index = if options.has_key?(:index)
+                  "_#{options[:index]}"
+                elsif defined?(@auto_index)
+                  "_#{@auto_index}"
+                else
+                  ""
+                end
         sanitized_method_name = method_name.to_s.gsub(/[\?\/\-]$/, '')
 
-        "#{sanitized_object_name}#{index}_#{sanitized_method_name}_#{value}"
+        "#{@@custom_id_prefix}#{sanitized_object_name}#{index}_#{sanitized_method_name}_#{value}"
       end
 
       # Gets the nested_child_index value from the parent builder. In Rails 2.3
